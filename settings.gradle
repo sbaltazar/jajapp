@@ -1,1 +1,3 @@
-include ':app', ':backend', ':jajava'
+include ':app', ':backend'
+include ':jajava' // Java library that provides jokes
+include ':jajandroid' // Android library that shows jokes

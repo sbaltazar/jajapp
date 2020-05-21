@@ -1,0 +1,4 @@
+<resources>
+    <string name="test_joke">Joke!!</string>
+    <string name="error_joke_not_found">There was an error showing the joke</string>
+</resources>
