@@ -1,11 +1,10 @@
-package com.udacity.gradle.builditbigger;
+package com.udacity.gradle.builditbigger.free;
 
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.util.Pair;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -16,6 +15,7 @@ import com.google.api.client.extensions.android.json.AndroidJsonFactory;
 import com.google.api.client.googleapis.services.AbstractGoogleClientRequest;
 import com.google.api.client.googleapis.services.GoogleClientRequestInitializer;
 import com.sebastian.jajandroid.ShowJoke;
+import com.udacity.gradle.builditbigger.R;
 import com.udacity.gradle.builditbigger.backend.myApi.MyApi;
 
 import java.io.IOException;
@@ -73,11 +73,11 @@ public class MainActivity extends AppCompatActivity {
         context.startActivity(intent);
     }
 
-    static class EndpointsAsyncTask extends AsyncTask<Void, Void, String> {
+    public static class EndpointsAsyncTask extends AsyncTask<Void, Void, String> {
         private MyApi myApiService = null;
         private WeakReference<Context> wrContext; // To avoid leaking context
 
-        EndpointsAsyncTask(Context context){
+        public EndpointsAsyncTask(Context context){
             wrContext = new WeakReference<>(context);
         }
 
