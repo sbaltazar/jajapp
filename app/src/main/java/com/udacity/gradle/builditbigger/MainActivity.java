@@ -10,13 +10,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.extensions.android.json.AndroidJsonFactory;
 import com.google.api.client.googleapis.services.AbstractGoogleClientRequest;
 import com.google.api.client.googleapis.services.GoogleClientRequestInitializer;
-import com.teller.jajava.JajaTeller;
 import com.sebastian.jajandroid.ShowJoke;
 import com.udacity.gradle.builditbigger.backend.myApi.MyApi;
 
@@ -56,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void tellJoke(View view) {
 
-        new EndpointsAsyncTask(this).execute(new Pair<Context, String>(this, "Manfred"));
+        new EndpointsAsyncTask(this).execute();
 
         // showJoke(this, JajaTeller.tellJajavaJoke());
         //Toast.makeText(this, JajaTeller.tellJajavaJoke(), Toast.LENGTH_SHORT).show();
@@ -75,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
         context.startActivity(intent);
     }
 
-    static class EndpointsAsyncTask extends AsyncTask<Pair<Context, String>, Void, String> {
+    static class EndpointsAsyncTask extends AsyncTask<Void, Void, String> {
         private MyApi myApiService = null;
         private WeakReference<Context> wrContext; // To avoid leaking context
 
@@ -93,7 +91,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        protected String doInBackground(Pair<Context, String>... params) {
+        protected String doInBackground(Void... params) {
             if(myApiService == null) {  // Only do this once
                 MyApi.Builder builder = new MyApi.Builder(AndroidHttp.newCompatibleTransport(),
                         new AndroidJsonFactory(), null)
