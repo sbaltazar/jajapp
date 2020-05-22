@@ -6,6 +6,7 @@ import com.google.api.server.spi.config.ApiNamespace;
 
 import javax.inject.Named;
 
+import com.teller.jajava.JajaTeller;
 /** An endpoint class we are exposing */
 @Api(
         name = "myApi",
@@ -23,6 +24,15 @@ public class MyEndpoint {
     public MyBean sayHi(@Named("name") String name) {
         MyBean response = new MyBean();
         response.setData("Hi, " + name);
+
+        return response;
+    }
+
+    @ApiMethod(name = "sayJoke")
+    public MyBean sayJoke(){
+
+        MyBean response = new MyBean();
+        response.setData(JajaTeller.tellJajavaJoke());
 
         return response;
     }
