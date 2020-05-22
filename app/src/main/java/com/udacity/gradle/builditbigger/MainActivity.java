@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.util.Pair;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
@@ -83,6 +84,15 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
+        protected void onPreExecute() {
+            if (wrContext != null) {
+                FragmentManager fragmentManager = ((AppCompatActivity) wrContext.get()).getSupportFragmentManager();
+                MainActivityFragment fragment = (MainActivityFragment) fragmentManager.findFragmentById(R.id.fragment);
+                fragment.showProgressBar();
+            }
+        }
+
+        @Override
         protected String doInBackground(Pair<Context, String>... params) {
             if(myApiService == null) {  // Only do this once
                 MyApi.Builder builder = new MyApi.Builder(AndroidHttp.newCompatibleTransport(),
@@ -115,6 +125,9 @@ public class MainActivity extends AppCompatActivity {
         protected void onPostExecute(String joke) {
 
             if (wrContext != null){
+                FragmentManager fragmentManager = ((AppCompatActivity) wrContext.get()).getSupportFragmentManager();
+                MainActivityFragment fragment = (MainActivityFragment) fragmentManager.findFragmentById(R.id.fragment);
+                fragment.hideProgressBar();
                 // Start a new activity from the Android library
                 showJoke(wrContext.get(), joke);
             }
