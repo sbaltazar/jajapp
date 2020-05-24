@@ -11,6 +11,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.util.concurrent.CountDownLatch;
+
 import static org.junit.Assert.*;
 
 /**
@@ -25,23 +27,29 @@ public class MainActivityTest {
     public ActivityTestRule<MainActivity> activityRule = new ActivityTestRule<>(MainActivity.class);
 
     @Test
-    public void getGCEResponse() {
+    public void getGCEResponse() throws InterruptedException {
+
+        final CountDownLatch signal = new CountDownLatch(1);
 
         InstrumentationRegistry.getInstrumentation().runOnMainSync(new Runnable() {
             @Override
             public void run() {
-
                 new MainActivity.EndpointsAsyncTask(activityRule.getActivity()) {
+
                     @Override
                     protected void onPostExecute(String joke) {
-
                         if (joke != null && !joke.isEmpty()) {
                             assertTrue(true);
+                        } else {
+                            fail("Error retrieving the joke. Check CGE Endpoint");
                         }
+                        signal.countDown();
                     }
                 }.execute();
             }
         });
+        // Force Espresso to wait for asynctask to finish
+        signal.await();
     }
 
 }

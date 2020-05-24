@@ -6,9 +6,11 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.extensions.android.json.AndroidJsonFactory;
@@ -65,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
      *
      * @param joke Joke provided
      */
-    public static void showJoke(Context context, String joke){
+    public static void showJoke(Context context, String joke) {
 
         Intent intent = new Intent(context, ShowJoke.class);
         intent.putExtra(ShowJoke.EXTRA_JOKE, joke);
@@ -77,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
         private MyApi myApiService = null;
         private WeakReference<Context> wrContext; // To avoid leaking context
 
-        public EndpointsAsyncTask(Context context){
+        public EndpointsAsyncTask(Context context) {
             wrContext = new WeakReference<>(context);
         }
 
@@ -92,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected String doInBackground(Void... params) {
-            if(myApiService == null) {  // Only do this once
+            if (myApiService == null) {  // Only do this once
                 MyApi.Builder builder = new MyApi.Builder(AndroidHttp.newCompatibleTransport(),
                         new AndroidJsonFactory(), null)
                         // options for running against local devappserver
@@ -115,21 +117,26 @@ public class MainActivity extends AppCompatActivity {
                 // Geting the joke from the API call
                 return myApiService.sayJoke().execute().getData();
             } catch (IOException e) {
-                return e.getMessage();
+                Log.e("MainActivity", e.getMessage());
+                return null;
             }
         }
 
         @Override
         protected void onPostExecute(String joke) {
-
-            if (wrContext != null){
+            if (wrContext != null) {
+                // Hiding the progress bar
                 FragmentManager fragmentManager = ((AppCompatActivity) wrContext.get()).getSupportFragmentManager();
                 MainActivityFragment fragment = (MainActivityFragment) fragmentManager.findFragmentById(R.id.fragment);
                 fragment.hideProgressBar();
-                // Start a new activity from the Android library
-                showJoke(wrContext.get(), joke);
-            }
 
+                if (joke == null || joke.isEmpty()) {
+                    Toast.makeText(wrContext.get(), R.string.error_retrieving_joke, Toast.LENGTH_SHORT).show();
+                } else {
+                    // Start a new activity from the Android library
+                    showJoke(wrContext.get(), joke);
+                }
+            }
         }
     }
 

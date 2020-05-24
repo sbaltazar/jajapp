@@ -2,6 +2,8 @@ package com.udacity.gradle.builditbigger;
 
 import android.support.test.InstrumentationRegistry;
 
+import android.support.test.espresso.Espresso;
+import android.support.test.espresso.action.ViewActions;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
@@ -11,6 +13,9 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.util.concurrent.CountDownLatch;
+
+import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static org.junit.Assert.*;
 
 /**
@@ -25,23 +30,29 @@ public class MainActivityTest {
     public ActivityTestRule<MainActivity> activityRule = new ActivityTestRule<>(MainActivity.class);
 
     @Test
-    public void getGCEResponse() {
+    public void getGCEResponse() throws InterruptedException {
+
+        final CountDownLatch signal = new CountDownLatch(1);
 
         InstrumentationRegistry.getInstrumentation().runOnMainSync(new Runnable() {
             @Override
             public void run() {
-
                 new MainActivity.EndpointsAsyncTask(activityRule.getActivity()) {
+
                     @Override
                     protected void onPostExecute(String joke) {
-
                         if (joke != null && !joke.isEmpty()) {
                             assertTrue(true);
+                        } else {
+                            fail("Error retrieving the joke. Check CGE Endpoint");
                         }
+                        signal.countDown();
                     }
                 }.execute();
             }
         });
+        // Force Espresso to wait for asynctask to finish
+        signal.await();
     }
 
 }
